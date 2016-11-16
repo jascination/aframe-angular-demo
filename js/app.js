@@ -27,19 +27,14 @@ angular
         $http.get('http://services.realestate.com.au/services/listings/' + $scope.search)
              .then(
              (res) => {
-                console.log(res.data);
-
-
                 
                 $scope.imgs = createImgs(res.data.images);
-                
 
                 $scope.agent = {
                     name: res.data.agency.name,
                     img : 'http://127.0.0.1:8080/'  + res.data.agency.logo.images[0].server + res.data.agency.logo.images[0].uri 
                 }
 
-                console.log($scope.agent);
                 $scope.ready = true;
 
                 clickSetup();
@@ -206,7 +201,6 @@ angular
         restrict: 'E',
         replace: true,
         template: '<a-scene>' +
-
                     '<a-entity class="carousel" position="0 3 0" >' +
                         '<a-box ' + 
                             'ng-repeat="im in imgs track by $index" ' +
@@ -220,12 +214,11 @@ angular
                             'cursor-listener ' +
                         '></a-box>' +
                     '</a-entity>' +
-
-                    '<a-image position="0 -2 -10" width="5" height="2" ng-attr-src="{{trustSrc(agent.img)}}"></a-image>' +
-                    '<a-entity position="-10 -5 -10"><a-entity scale="4 4 4" ng-attr-bmfont-text="{{\'align: center; text:\' + agent.name}}"></a-entity></a-entity>' +
-
-                    //'<a-entity camera mouse-cursor>' +
-                    '<a-entity position="0 0 0" >' + 
+                    '<a-entity>' + 
+                        '<a-image position="0 -2 -10" width="5" height="2" ng-attr-src="{{trustSrc(agent.img)}}"></a-image>' +
+                        '<a-entity position="-10 -5 -10"><a-entity scale="4 4 4" ng-attr-bmfont-text="{{\'align: center; text:\' + agent.name}}"></a-entity></a-entity>' +
+                    '</a-entity>' +
+                    '<a-entity>' + 
                         '<a-camera look-controls>' +
                             '<a-cursor color="#2E3A87"></a-cursor>' +
                         '</a-camera>' +
