@@ -1,11 +1,9 @@
 
-var auto = false;
-
+var auto = true;  
+var ip = 'http://localhost:8080/';
 
 angular
-
 .module('ar', ['ngSanitize'])
-
 .controller('homeCtrl', ['$scope', '$http', '$sce', '$interval', function($scope, $http, $sce, $interval) {
 
     $scope.frames = {
@@ -25,22 +23,23 @@ angular
         $scope.loading = true;
 
         $http.get('http://services.realestate.com.au/services/listings/' + $scope.search)
-             .then(
-             (res) => {
-                
-                $scope.imgs = createImgs(res.data.images);
-
-                $scope.agent = {
-                    name: res.data.agency.name,
-                    img : 'http://127.0.0.1:8080/'  + res.data.agency.logo.images[0].server + res.data.agency.logo.images[0].uri 
-                }
-
-                $scope.ready = true;
-
-                clickSetup();
-             }, () => {
+             .then(processData, () => {
                 $scope.error = "Error loading your results. Try again."
              });
+    }
+
+    function processData(res){
+
+        $scope.imgs = createImgs(res.data.images);
+
+        $scope.agent = {
+            name: res.data.agency.name,
+            img : ip  + res.data.agency.logo.images[0].server + res.data.agency.logo.images[0].uri 
+        }
+
+        $scope.ready = true;
+
+        clickSetup();
     }
 
 
@@ -51,7 +50,7 @@ angular
 
         return  d.map(function(e, index){
                     return {
-                        url: 'http://127.0.0.1:8080/' + e.server + '/1010x570-fit' + e.uri,
+                        url: ip + e.server + '/1010x570-fit' + e.uri,
                         position: calcPos(d.length, index) + ' 0 -10'
                     }
                 })
@@ -94,7 +93,40 @@ angular
                         } 
                     });
 
+
                     loopImgs(diffInd);
+                }
+              
+            });
+          }
+        });
+
+        AFRAME.registerComponent('click-back', {
+          init: function () {
+
+            this.el.addEventListener('click', function () {
+
+                if(!animating){
+
+                    animating = true;
+
+                    loopImgs(1);
+                }
+              
+            });
+          }
+        });
+        
+        AFRAME.registerComponent('click-forward', {
+          init: function () {
+
+            this.el.addEventListener('click', function () {
+
+                if(!animating){
+
+                    animating = true;
+
+                    loopImgs(-1);
                 }
               
             });
@@ -158,7 +190,6 @@ angular
                 currentPos = newPos;
 
             if(newPos === pos2){
-                animating = false;
                 cb();
                 $interval.cancel(promise);
             }
@@ -168,8 +199,11 @@ angular
     }
 
     if(auto){
-        $scope.search = 7695087;
-        $scope.go();
+        
+        $scope.imgs = sampleData.imgs;
+        $scope.agent = sampleData.agent;
+        $scope.ready = true;
+        clickSetup();
     }
 
 
@@ -215,8 +249,10 @@ angular
                         '></a-box>' +
                     '</a-entity>' +
                     '<a-entity>' + 
-                        '<a-image position="0 -2 -10" width="5" height="2" ng-attr-src="{{trustSrc(agent.img)}}"></a-image>' +
+                        '<a-entity click-back position="-5 -2 -10" geometry="primitive: circle; radius: 1; segments: 1; thetaStart: 180" material="side: double; color: black;"></a-entity>' +
+                        '<a-image position="0 -2 -10" width="6" height="1.2" ng-attr-src="{{trustSrc(agent.img)}}"></a-image>' +
                         '<a-entity position="-10 -5 -10"><a-entity scale="4 4 4" ng-attr-bmfont-text="{{\'align: center; text:\' + agent.name}}"></a-entity></a-entity>' +
+                        '<a-entity click-forward position="5 -2 -10" geometry="primitive: circle; radius: 1; segments: 1" material="side: double; color: black;"></a-entity>' +
                     '</a-entity>' +
                     '<a-entity>' + 
                         '<a-camera look-controls>' +
@@ -226,4 +262,88 @@ angular
                   '</a-scene>'
     }
 }])
+
+
+
+
+var sampleData = {
+  agent: {
+      "name": "The Fawkner Park Front Residences - Colliers",
+      "img": "/img/20150618114618.gif"
+    },
+  imgs:  [
+      {
+        "url": "/img/image2.jpg",
+        "position": "135 0 -10"
+      },
+      {
+        "url": "/img/image3.jpg",
+        "position": "120 0 -10"
+      },
+      {
+        "url": "/img/image4.jpg",
+        "position": "105 0 -10"
+      },
+      {
+        "url": "/img/image5.jpg",
+        "position": "90 0 -10"
+      },
+      {
+        "url": "/img/image6.jpg",
+        "position": "75 0 -10"
+      },
+      {
+        "url": "/img/image7.jpg",
+        "position": "60 0 -10"
+      },
+      {
+        "url": "/img/image8.jpg",
+        "position": "45 0 -10"
+      },
+      {
+        "url": "/img/image9.jpg",
+        "position": "30 0 -10"
+      },
+      {
+        "url": "/img/image10.jpg",
+        "position": "15 0 -10"
+      },
+      {
+        "url": "/img/image11.jpg",
+        "position": "0 0 -10"
+      },
+      {
+        "url": "/img/image12.jpg",
+        "position": "-15 0 -10"
+      },
+      {
+        "url": "/img/image13.jpg",
+        "position": "-30 0 -10"
+      },
+      {
+        "url": "/img/image14.jpg",
+        "position": "-45 0 -10"
+      },
+      {
+        "url": "/img/image15.jpg",
+        "position": "-60 0 -10"
+      },
+      {
+        "url": "/img/image16.jpg",
+        "position": "-75 0 -10"
+      },
+      {
+        "url": "/img/image17.jpg",
+        "position": "-90 0 -10"
+      },
+      {
+        "url": "/img/image18.jpg",
+        "position": "-105 0 -10"
+      },
+      {
+        "url": "/img/image19.jpg",
+        "position": "-120 0 -10"
+      }
+    ]
+}
 
