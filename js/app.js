@@ -1,6 +1,7 @@
 (function(){
 
-    var auto = true;  
+
+    var auto = false;  
     var ip = 'http://localhost:8080/';
 
     angular
@@ -9,7 +10,7 @@
         
         var animating = false;
 
-        // Units in metres, edit to affect all frame sizes
+        // Edit these params to change each frame's visual layout
         $scope.frames = {
             w: 12,
             h: 6,
